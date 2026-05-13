@@ -272,7 +272,7 @@ export default function WeddingInvitation() {
                 style={{
                   background: "linear-gradient(160deg, #FDFAF5 0%, #F9F4EA 60%, #F2EAD8 100%)",
                   borderRadius: 24,
-                  padding: "22px 28px 20px",
+                  padding: "12px 28px 20px",
                   boxShadow:
                     "0 32px 80px rgba(44,36,23,0.18), 0 8px 24px rgba(44,36,23,0.1), inset 0 1px 0 rgba(255,255,255,0.9)",
                   border: "1px solid rgba(201,168,76,0.25)",
@@ -368,11 +368,14 @@ export default function WeddingInvitation() {
                     animate={cardVisible ? { opacity: 1 } : {}}
                     transition={{ delay: 0.82, duration: 0.6 }}
                     style={{
-                      fontSize: 9, letterSpacing: 5, color: "#9B8B73",
-                      fontWeight: 300, textTransform: "uppercase", marginBottom: 2,
+                      fontFamily: "'Cormorant Garamond', serif",
+                      fontSize: "clamp(20px, 5.5vw, 26px)", letterSpacing: 6,
+                      color: "#C9A84C", fontWeight: 300,
+                      textAlign: "center", margin: "1px 0",
+                      display: "block",
                     }}
                   >
-                    AND
+                    &amp;
                   </motion.div>
 
                   {/* Bride Name */}
@@ -419,14 +422,14 @@ export default function WeddingInvitation() {
                   >
                     <div style={{
                       fontSize: 9, letterSpacing: 4, textTransform: "uppercase",
-                      color: "#9B8B73", fontWeight: 300, marginBottom: 4,
+                      color: "#5C4E3A", fontWeight: 400, marginBottom: 4,
                     }}>
                       June
                     </div>
                     <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 14 }}>
                       <div style={{ textAlign: "right" }}>
-                        <div style={{ width: 44, height: "0.5px", background: "#9B8B73", opacity: 0.5, marginBottom: 3 }} />
-                        <span style={{ fontSize: 8, letterSpacing: 2.5, textTransform: "uppercase", color: "#9B8B73", fontWeight: 300 }}>Tuesday</span>
+                        <div style={{ width: 44, height: "0.5px", background: "#7A6A55", opacity: 0.6, marginBottom: 3 }} />
+                        <span style={{ fontSize: 8, letterSpacing: 2.5, textTransform: "uppercase", color: "#5C4E3A", fontWeight: 400 }}>Monday</span>
                       </div>
                       <div style={{
                         fontFamily: "'Cormorant Garamond', serif",
@@ -437,8 +440,8 @@ export default function WeddingInvitation() {
                         <span style={{ fontSize: "clamp(11px, 3vw, 13px)", letterSpacing: 2, fontWeight: 300, fontStyle: "normal" }}>2026</span>
                       </div>
                       <div style={{ textAlign: "left" }}>
-                        <div style={{ width: 44, height: "0.5px", background: "#9B8B73", opacity: 0.5, marginBottom: 3 }} />
-                        <span style={{ fontSize: 8, letterSpacing: 2.5, textTransform: "uppercase", color: "#9B8B73", fontWeight: 300 }}>7:00 PM</span>
+                        <div style={{ width: 44, height: "0.5px", background: "#7A6A55", opacity: 0.6, marginBottom: 3 }} />
+                        <span style={{ fontSize: 8, letterSpacing: 2.5, textTransform: "uppercase", color: "#5C4E3A", fontWeight: 400 }}>7:00 PM</span>
                       </div>
                     </div>
                   </motion.div>
@@ -463,7 +466,14 @@ export default function WeddingInvitation() {
                       color: "#9B8B73", fontWeight: 300,
                       textTransform: "uppercase", lineHeight: 1.7,
                     }}>
-                      144 Gulshan Avenue, Gulshan-1,<br />Dhaka-1212
+                      Gulshan Avenue, Beside Police Plaza,<br />Dhaka-1212
+                    </p>
+                    <p style={{
+                      fontSize: "clamp(7.5px, 2vw, 9px)", letterSpacing: 1.5,
+                      color: "#9B8B73", fontWeight: 300,
+                      textTransform: "uppercase", lineHeight: 1.7, marginTop: 3,
+                    }}>
+                      RSVP: 01715446609, 01940909719
                     </p>
                   </motion.div>
                 </div>
