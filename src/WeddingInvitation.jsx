@@ -263,7 +263,7 @@ export default function WeddingInvitation() {
 									fontSize: "clamp(13px, 3.5vw, 16px)",
 									color: "#C9A84C",
 									letterSpacing: 6,
-									margin: "6px 0",
+									margin: "4px 0",
 									fontWeight: 300,
 								}}
 							>
@@ -433,7 +433,7 @@ export default function WeddingInvitation() {
 									background:
 										"linear-gradient(160deg, #FDFAF5 0%, #F9F4EA 60%, #F2EAD8 100%)",
 									borderRadius: 24,
-									padding: "12px 28px 20px",
+									padding: "0px 28px 60px",
 									boxShadow:
 										"0 32px 80px rgba(44,36,23,0.18), 0 8px 24px rgba(44,36,23,0.1), inset 0 1px 0 rgba(255,255,255,0.9)",
 									border: "1px solid rgba(201,168,76,0.25)",
@@ -490,7 +490,12 @@ export default function WeddingInvitation() {
 								</div>
 
 								{/* Content */}
-								<div style={{ position: "relative", zIndex: 1 }}>
+								<div
+									style={{
+										position: "relative",
+										zIndex: 1,
+									}}
+								>
 									{/* Bismillah Arabic */}
 									<motion.div
 										initial={{ opacity: 0, y: 8 }}
@@ -507,6 +512,7 @@ export default function WeddingInvitation() {
 									>
 										بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ
 									</motion.div>
+
 									{/* Salutation */}
 									<motion.p
 										initial={{ opacity: 0 }}
@@ -523,6 +529,7 @@ export default function WeddingInvitation() {
 									>
 										Assalamualaikum Warahmatullahi Wabarakatuh
 									</motion.p>
+
 									{/* Host line */}
 									<motion.p
 										initial={{ opacity: 0 }}
@@ -547,6 +554,7 @@ export default function WeddingInvitation() {
 										<br />
 										Reception Ceremony of our eldest son
 									</motion.p>
+
 									{/* Groom Name */}
 									<motion.h1
 										initial={{ opacity: 0, y: 12 }}
@@ -565,6 +573,7 @@ export default function WeddingInvitation() {
 									>
 										Md Reazul Islam
 									</motion.h1>
+
 									<motion.div
 										initial={{ opacity: 0 }}
 										animate={cardVisible ? { opacity: 1 } : {}}
@@ -582,6 +591,7 @@ export default function WeddingInvitation() {
 									>
 										&amp;
 									</motion.div>
+
 									{/* Bride Name */}
 									<motion.h1
 										initial={{ opacity: 0, y: 12 }}
@@ -622,7 +632,9 @@ export default function WeddingInvitation() {
 											Mohammed Altaf Hossain Salim &amp; Nazma Akter
 										</strong>
 									</motion.p>
+
 									<GoldDivider />
+
 									{/* Date block */}
 									<motion.div
 										initial={{ opacity: 0, y: 8 }}
@@ -719,7 +731,9 @@ export default function WeddingInvitation() {
 											</div>
 										</div>
 									</motion.div>
+
 									<GoldDivider />
+
 									{/* Venue */}
 									<motion.div
 										initial={{ opacity: 0, y: 6 }}
