@@ -1,8 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useLayoutEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 // ── Sparkle particle ──────────────────────────────────────────────────────────
 function Sparkle({ x, y, delay }) {
+	const repeatDelay = 2 + ((x * 13 + y * 7 + delay * 10) % 40) / 10;
+
 	return (
 		<motion.div
 			className="pointer-events-none absolute"
@@ -13,7 +15,7 @@ function Sparkle({ x, y, delay }) {
 				duration: 1.8,
 				delay,
 				repeat: Infinity,
-				repeatDelay: Math.random() * 4 + 2,
+				repeatDelay,
 			}}
 		>
 			<svg width="14" height="14" viewBox="0 0 14 14" fill="none">
@@ -131,15 +133,12 @@ const SPARKLES = [
 
 // ── Main Component ────────────────────────────────────────────────────────────
 export default function WeddingInvitation() {
-	const [phase, setPhase] = useState("landing"); // landing | opening | card
-	const [cardVisible, setCardVisible] = useState(false);
+	const [phase, setPhase] = useState("landing"); // landing | card
+	const [cardScale, setCardScale] = useState(1);
+	const cardRef = useRef(null);
 
 	const handleOpen = () => {
-		setPhase("opening");
-		setTimeout(() => {
-			setPhase("card");
-			setCardVisible(true);
-		}, 900);
+		setPhase("card");
 	};
 
 	// Google Fonts
@@ -152,12 +151,41 @@ export default function WeddingInvitation() {
 		return () => document.head.removeChild(link);
 	}, []);
 
+	useLayoutEffect(() => {
+		if (phase === "landing") return;
+
+		const fitCardToViewport = () => {
+			const card = cardRef.current;
+			if (!card) return;
+
+			const viewportHeight = window.visualViewport?.height ?? window.innerHeight;
+			const isCompact = window.matchMedia(
+				"(max-width: 640px), (max-height: 760px)",
+			).matches;
+			const verticalPadding = isCompact ? 18 : 48;
+			const naturalHeight = card.scrollHeight;
+
+			setCardScale(Math.min(1, (viewportHeight - verticalPadding) / naturalHeight));
+		};
+
+		const frame = requestAnimationFrame(fitCardToViewport);
+		window.addEventListener("resize", fitCardToViewport);
+		window.visualViewport?.addEventListener("resize", fitCardToViewport);
+
+		return () => {
+			cancelAnimationFrame(frame);
+			window.removeEventListener("resize", fitCardToViewport);
+			window.visualViewport?.removeEventListener("resize", fitCardToViewport);
+		};
+	}, [phase]);
+
 	return (
 		<div
 			style={{
-				height: "100dvh",
-				width: "100vw",
-				overflow: "hidden",
+				minHeight: "100dvh",
+				width: "100%",
+				overflowX: "hidden",
+				overflowY: "auto",
 				background:
 					"linear-gradient(145deg, #FAF7F2 0%, #F5EFE6 40%, #EDE3D5 100%)",
 				position: "relative",
@@ -176,9 +204,8 @@ export default function WeddingInvitation() {
 			/>
 
 			{/* Sparkles */}
-			{SPARKLES.map((s, i) => (
-				<Sparkle key={i} {...s} />
-			))}
+			{phase === "landing" &&
+				SPARKLES.map((s, i) => <Sparkle key={i} {...s} />)}
 
 			{/* ── LANDING ── */}
 			<AnimatePresence>
@@ -399,41 +426,39 @@ export default function WeddingInvitation() {
 
 			{/* ── CARD ── */}
 			<AnimatePresence>
-				{(phase === "opening" || phase === "card") && (
+				{phase === "card" && (
 					<motion.div
+						className="invitation-card-stage"
 						key="card-wrapper"
-						initial={{ opacity: 0 }}
-						animate={{ opacity: 1 }}
-						transition={{ duration: 0.4 }}
+						initial={false}
 						style={{
-							position: "absolute",
-							inset: 0,
+							position: "relative",
+							minHeight: "100dvh",
 							display: "flex",
-							alignItems: "center",
-							justifyContent: "center",
+							boxSizing: "border-box",
 							zIndex: 20,
 							perspective: 1400,
 						}}
 					>
 						<motion.div
-							initial={{ rotateY: -90, opacity: 0, scale: 0.92 }}
-							animate={cardVisible ? { rotateY: 0, opacity: 1, scale: 1 } : {}}
-							transition={{ duration: 1.0, ease: [0.22, 1, 0.36, 1] }}
+							initial={false}
+							animate={{ opacity: 1, scale: cardScale }}
+							transition={{ duration: 0 }}
 							style={{
-								width: "min(88vw, 380px)",
-								maxHeight: "88dvh",
-								transformOrigin: "left center",
+								width: "var(--invitation-card-width, min(88vw, 380px))",
+								transformOrigin: "top center",
 								transformStyle: "preserve-3d",
 								position: "relative",
 							}}
 						>
 							{/* Card */}
 							<div
+								ref={cardRef}
 								style={{
 									background:
 										"linear-gradient(160deg, #FDFAF5 0%, #F9F4EA 60%, #F2EAD8 100%)",
 									borderRadius: 24,
-									padding: "0px 28px 60px",
+									padding: "var(--invitation-card-padding, 0px 28px 60px)",
 									boxShadow:
 										"0 32px 80px rgba(44,36,23,0.18), 0 8px 24px rgba(44,36,23,0.1), inset 0 1px 0 rgba(255,255,255,0.9)",
 									border: "1px solid rgba(201,168,76,0.25)",
@@ -498,9 +523,8 @@ export default function WeddingInvitation() {
 								>
 									{/* Bismillah Arabic */}
 									<motion.div
-										initial={{ opacity: 0, y: 8 }}
-										animate={cardVisible ? { opacity: 1, y: 0 } : {}}
-										transition={{ delay: 0.45, duration: 0.7 }}
+										initial={false}
+										animate={{ opacity: 1 }}
 										style={{
 											fontSize: "clamp(18px, 5vw, 22px)",
 											color: "#2C1F08",
@@ -515,9 +539,8 @@ export default function WeddingInvitation() {
 
 									{/* Salutation */}
 									<motion.p
-										initial={{ opacity: 0 }}
-										animate={cardVisible ? { opacity: 1 } : {}}
-										transition={{ delay: 0.55, duration: 0.7 }}
+										initial={false}
+										animate={{ opacity: 1 }}
 										style={{
 											fontSize: "clamp(6.5px, 1.8vw, 8px)",
 											letterSpacing: 2,
@@ -532,9 +555,8 @@ export default function WeddingInvitation() {
 
 									{/* Host line */}
 									<motion.p
-										initial={{ opacity: 0 }}
-										animate={cardVisible ? { opacity: 1 } : {}}
-										transition={{ delay: 0.62, duration: 0.7 }}
+										initial={false}
+										animate={{ opacity: 1 }}
 										style={{
 											fontSize: "clamp(7px, 1.9vw, 8.5px)",
 											letterSpacing: 1.5,
@@ -557,9 +579,8 @@ export default function WeddingInvitation() {
 
 									{/* Groom Name */}
 									<motion.h1
-										initial={{ opacity: 0, y: 12 }}
-										animate={cardVisible ? { opacity: 1, y: 0 } : {}}
-										transition={{ delay: 0.72, duration: 0.8 }}
+										initial={false}
+										animate={{ opacity: 1 }}
 										style={{
 											fontFamily: "'Cormorant Garamond', serif",
 											fontSize: "clamp(26px, 7.5vw, 34px)",
@@ -575,9 +596,8 @@ export default function WeddingInvitation() {
 									</motion.h1>
 
 									<motion.div
-										initial={{ opacity: 0 }}
-										animate={cardVisible ? { opacity: 1 } : {}}
-										transition={{ delay: 0.82, duration: 0.6 }}
+										initial={false}
+										animate={{ opacity: 1 }}
 										style={{
 											fontFamily: "'Cormorant Garamond', serif",
 											fontSize: "clamp(20px, 5.5vw, 26px)",
@@ -594,9 +614,8 @@ export default function WeddingInvitation() {
 
 									{/* Bride Name */}
 									<motion.h1
-										initial={{ opacity: 0, y: 12 }}
-										animate={cardVisible ? { opacity: 1, y: 0 } : {}}
-										transition={{ delay: 0.78, duration: 0.8 }}
+										initial={false}
+										animate={{ opacity: 1 }}
 										style={{
 											fontFamily: "'Cormorant Garamond', serif",
 											fontSize: "clamp(26px, 7.5vw, 34px)",
@@ -613,9 +632,8 @@ export default function WeddingInvitation() {
 
 									{/* Bride's parents */}
 									<motion.p
-										initial={{ opacity: 0 }}
-										animate={cardVisible ? { opacity: 1 } : {}}
-										transition={{ delay: 0.9, duration: 0.7 }}
+										initial={false}
+										animate={{ opacity: 1 }}
 										style={{
 											fontSize: "clamp(6.5px, 1.8vw, 8px)",
 											letterSpacing: 1.5,
@@ -637,9 +655,8 @@ export default function WeddingInvitation() {
 
 									{/* Date block */}
 									<motion.div
-										initial={{ opacity: 0, y: 8 }}
-										animate={cardVisible ? { opacity: 1, y: 0 } : {}}
-										transition={{ delay: 1.05, duration: 0.7 }}
+										initial={false}
+										animate={{ opacity: 1 }}
 										style={{ marginBottom: 8 }}
 									>
 										<div
@@ -736,9 +753,8 @@ export default function WeddingInvitation() {
 
 									{/* Venue */}
 									<motion.div
-										initial={{ opacity: 0, y: 6 }}
-										animate={cardVisible ? { opacity: 1, y: 0 } : {}}
-										transition={{ delay: 1.2, duration: 0.7 }}
+										initial={false}
+										animate={{ opacity: 1 }}
 									>
 										<p
 											style={{
