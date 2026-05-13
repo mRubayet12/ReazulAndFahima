@@ -1,4 +1,4 @@
-import { useState, useEffect, useLayoutEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 // ── Sparkle particle ──────────────────────────────────────────────────────────
@@ -134,8 +134,6 @@ const SPARKLES = [
 // ── Main Component ────────────────────────────────────────────────────────────
 export default function WeddingInvitation() {
 	const [phase, setPhase] = useState("landing"); // landing | card
-	const [cardScale, setCardScale] = useState(1);
-	const cardRef = useRef(null);
 
 	const handleOpen = () => {
 		setPhase("card");
@@ -150,34 +148,6 @@ export default function WeddingInvitation() {
 		document.head.appendChild(link);
 		return () => document.head.removeChild(link);
 	}, []);
-
-	useLayoutEffect(() => {
-		if (phase === "landing") return;
-
-		const fitCardToViewport = () => {
-			const card = cardRef.current;
-			if (!card) return;
-
-			const viewportHeight = window.visualViewport?.height ?? window.innerHeight;
-			const isCompact = window.matchMedia(
-				"(max-width: 640px), (max-height: 760px)",
-			).matches;
-			const verticalPadding = isCompact ? 18 : 48;
-			const naturalHeight = card.scrollHeight;
-
-			setCardScale(Math.min(1, (viewportHeight - verticalPadding) / naturalHeight));
-		};
-
-		const frame = requestAnimationFrame(fitCardToViewport);
-		window.addEventListener("resize", fitCardToViewport);
-		window.visualViewport?.addEventListener("resize", fitCardToViewport);
-
-		return () => {
-			cancelAnimationFrame(frame);
-			window.removeEventListener("resize", fitCardToViewport);
-			window.visualViewport?.removeEventListener("resize", fitCardToViewport);
-		};
-	}, [phase]);
 
 	return (
 		<div
@@ -441,24 +411,25 @@ export default function WeddingInvitation() {
 						}}
 					>
 						<motion.div
+							className="invitation-card-shell"
 							initial={false}
-							animate={{ opacity: 1, scale: cardScale }}
+							animate={{ opacity: 1 }}
 							transition={{ duration: 0 }}
 							style={{
 								width: "var(--invitation-card-width, min(88vw, 380px))",
-								transformOrigin: "top center",
 								transformStyle: "preserve-3d",
 								position: "relative",
 							}}
 						>
 							{/* Card */}
 							<div
-								ref={cardRef}
+								className="invitation-card"
 								style={{
 									background:
 										"linear-gradient(160deg, #FDFAF5 0%, #F9F4EA 60%, #F2EAD8 100%)",
 									borderRadius: 24,
 									padding: "var(--invitation-card-padding, 0px 28px 60px)",
+									height: "var(--invitation-card-height, auto)",
 									boxShadow:
 										"0 32px 80px rgba(44,36,23,0.18), 0 8px 24px rgba(44,36,23,0.1), inset 0 1px 0 rgba(255,255,255,0.9)",
 									border: "1px solid rgba(201,168,76,0.25)",
@@ -781,19 +752,6 @@ export default function WeddingInvitation() {
 											Gulshan Avenue, Beside Police Plaza,
 											<br />
 											Dhaka-1212
-										</p>
-										<p
-											style={{
-												fontSize: "clamp(7.5px, 2vw, 9px)",
-												letterSpacing: 1.5,
-												color: "#9B8B73",
-												fontWeight: 300,
-												textTransform: "uppercase",
-												lineHeight: 1.7,
-												marginTop: 3,
-											}}
-										>
-											RSVP: 01715446609, 01940909719
 										</p>
 									</motion.div>
 								</div>

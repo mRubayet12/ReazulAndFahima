@@ -60,14 +60,31 @@ body {
   padding: 24px 0 calc(24px + env(safe-area-inset-bottom));
 }
 
+.invitation-card {
+  box-sizing: border-box;
+}
+
 @media (max-width: 640px), (max-height: 760px) {
   .invitation-card-stage {
-    align-items: flex-start;
+    align-items: stretch;
     justify-content: center;
+    height: 100dvh;
+    min-height: 100dvh;
     padding-top: max(10px, env(safe-area-inset-top));
     padding-bottom: calc(8px + env(safe-area-inset-bottom));
     --invitation-card-width: min(90vw, 360px);
-    --invitation-card-padding: 0 24px 34px;
+    --invitation-card-height: 100%;
+    --invitation-card-padding: 0 24px 28px;
+  }
+
+  .invitation-card-shell {
+    height: 100%;
+  }
+
+  .invitation-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
   }
 }
 
